@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Celebration</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#C80505',secondary:'#FF9500'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: fall 5s ease-in-out infinite;
+        }
+        @keyframes fall {
+            0% {
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                transform: translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .timeline-item:nth-child(odd) {
+            margin-right: 20%;
+        }
+        .timeline-item:nth-child(even) {
+            margin-left: 20%;
+        }
+        .spin-wheel {
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+        .photo-filter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .egg-container {
+            position: relative;
+        }
+        .egg {
+            transition: transform 0.3s ease;
+        }
+        .egg:hover {
+            transform: scale(1.1);
+        }
+        .music-progress {
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .music-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #C80505, #FF9500);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+        .message-card {
+            transition: transform 0.2s ease;
+        }
+        .message-card:hover {
+            transform: translateY(-4px);
+        }
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="relative">
+    <!-- Confetti Animation -->
+    <div id="confetti-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10"></div>
+    <!-- Nav Bar -->
+    <nav class="fixed top-0 w-full bg-gray-900/90 backdrop-blur-md z-50 px-4 py-3 flex items-center justify-between border-b border-gray-800">
+        <div class="text-xl font-['Pacifico'] text-white">Uhhh Bot</div>
+        <div class="flex items-center space-x-2">
+            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-notification-3-line text-white"></i>
+            </button>
+            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-share-line text-white"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 pb-20">
+        <!-- Hero Section -->
+        <section class="relative px-4 py-8 flex flex-col items-center">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary/20 to-transparent opacity-50"></div>
+            
+            <h1 class="text-4xl font-bold text-center mb-2 z-10">Happy Birthday <span class="text-primary">Ammuluuu🎀</span></h1>
+            <p class="text-center text-gray-300 mb-6 z-10">Let's make your 19th birthday unforgettable!</p>
+            
+            <!-- Countdown Timer -->
+            <div class="flex justify-center space-x-4 mb-8 z-10">
+                <div class="countdown-item bg-gray-800 rounded-lg px-3 py-2 w-16 text-center">
+                    <span class="text-2xl font-bold text-primary">00</span>
+                    <span class="text-xs text-gray-400">Days</span>
+                </div>
+                <div class="countdown-item bg-gray-800 rounded-lg px-3 py-2 w-16 text-center">
+                    <span class="text-2xl font-bold text-primary">00</span>
+                    <span class="text-xs text-gray-400">Hours</span>
+                </div>
+                <div class="countdown-item bg-gray-800 rounded-lg px-3 py-2 w-16 text-center">
+                    <span class="text-2xl font-bold text-primary">00</span>
+                    <span class="text-xs text-gray-400">Minutes</span>
+                </div>
+            </div>
+            
+            <!-- Profile Image -->
+            <div class="relative mb-6 z-10">
+                <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-primary">
+                    <img src="l-phase-3.webp">
+                </div>
+                <div class="absolute -bottom-2 -right-2 bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="ri-cake-3-line ri-lg"></i>
+                </div>
+            </div>
+        </section>
+        <p class="text-center text-gray-300 mb-6 z-10">HAPPY BIRTHDAY MY LOVE 🫂🖇️❤️🎂
+            Who is bringing so much joy to my heart❤️. I am thankful for every moment we spend together, and I wish our happiness never ends.🧿 </p>
+
+    
+   
+        <!-- Photo Booth Section -->
+        <section class="px-4 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-camera-line mr-2 text-primary"></i>
+                Virtual Photo Booth
+            </h2>
+            
+            <div class="bg-gray-800 rounded-lg overflow-hidden mb-4">
+                <div class="relative aspect-[3/4] bg-gray-900">
+                    <img src="ChatGPT Image Apr 28, 2025 at 03_57_45 PM.png" alt="Photo Booth Preview" class="w-full h-full object-cover">
+                    <div class="photo-filter">
+                        <img src="ChatGPT Image Apr 28, 2025 at 03_57_45 PM.png">
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <div class="flex justify-between mb-4">
+                        <button class="bg-gray-700 text-white px-4 py-2 rounded-button cursor-pointer flex items-center">
+                            <i class="ri-camera-line mr-2"></i>
+                            Take Photo
+                        </button>
+                        <button class="bg-gray-700 text-white px-4 py-2 rounded-button cursor-pointer flex items-center">
+                            <i class="ri-film-line mr-2"></i>
+                            Record
+                        </button>
+                    </div>
+                    
+             
+                    <button class="w-full bg-secondary hover:bg-secondary/90 text-white font-semibold py-2 rounded-button cursor-pointer flex items-center justify-center">
+                        <i class="ri-share-line mr-2"></i>
+                        Share Your Celebration
+                    </button>
+                </div>
+            </div>
+            
+
+
+          <!-- Birthday Messages Section -->
+          <section class="px-4 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-message-3-line mr-2 text-primary"></i>
+                Birthday Wishes💌
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 mb-4">
+            <div class="message-card bg-gray-800 rounded-lg p-4">
+                <div class="flex items-start mb-3">
+                    <div class="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                        <img src="download.avif">
+                    </div>
+                    <div>
+                        <h4 class="font-semibold">chintuuu BOT👾</h4>
+                        <p class="text-xs text-gray-400">♾️ April 30, 2025</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-300 mb-3">Happy Puttina Roju🥳 My Dear Cutie Beauty Botuuuuuu </p>
+                <div class="flex justify-between items-center">
+                    <button class="text-gray-400 text-sm flex items-center">
+                        <i class="ri-heart-line mr-1"></i>
+                        143
+                    </button>
+                    <button class="text-gray-400 text-sm flex items-center">
+                        <i class="ri-reply-line mr-1"></i>
+                        Reply
+                    </button>
+                </div>
+            </div>    
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <div class="message-card bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-start mb-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                            <img src="images.jfif">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Arjun Das</h4>
+                            <p class="text-xs text-gray-400">12:00 April 30, 2025</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">Happy Birthday! 🎉
+                        Wishing you a day filled with love, laughter, and everything that makes you happy.
+                        Hope this year brings you lots of amazing moments and beautiful memories. 🥳</p>
+                    <div class="flex justify-between items-center">
+                        <button class="text-gray-400 text-sm flex items-center">
+                            <i class="ri-heart-line mr-1"></i>
+                            12
+                        </button>
+                        <button class="text-gray-400 text-sm flex items-center">
+                            <i class="ri-reply-line mr-1"></i>
+                            Reply
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="message-card bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-start mb-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                            <img src="images (1).jfif">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Nitish Kumar Reddy (NRK)</h4>
+                            <p class="text-xs text-gray-400">12:02 April 30, 2025</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">Another year, another adventure! 🌍✨ May your journey ahead be bright, bold, and beautiful! 🚀🌈 Happy Birthday! 🎊🎉</p>
+                    <div class="flex justify-between items-center">
+                        <button class="text-gray-400 text-sm flex items-center">
+                            <i class="ri-heart-line mr-1"></i>
+                            8
+                        </button>
+                        <button class="text-gray-400 text-sm flex items-center">
+                            <i class="ri-reply-line mr-1"></i>
+                            Reply
+                        </button>
+                    </div>
+                </div>
+ 
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <div class="message-card bg-gray-800 rounded-lg p-4">
+                        <div class="flex items-start mb-3">
+                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                                <img src="76297535.webp">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Nandamuri Balakrishna</h4>
+                                <p class="text-xs text-gray-400">12:10 April 30, 2025</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-3">I wish you many, many happy returns of the day. many more birthdays to celebrate. and godbless you with health, wealth, properity, security and longevity.🍺🍾</p>
+                        <div class="flex justify-between items-center">
+                            <button class="text-gray-400 text-sm flex items-center">
+                                <i class="ri-heart-line mr-1"></i>
+                                143
+                            </button>
+                            <button class="text-gray-400 text-sm flex items-center">
+                                <i class="ri-reply-line mr-1"></i>
+                                Reply
+                            </button>
+                        </div>
+                    </div>
+                    
+            <button class="w-full py-3 bg-gray-800 rounded-button text-gray-300 flex items-center justify-center cursor-pointer">
+                <i class="ri-add-line mr-2"></i>
+                Leave a Birthday Message
+            </button>
+        </section>
+    </main>
+
+        <!-- Memory Timeline Section -->
+        <section class="px-4 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-timeline-line mr-2 text-primary"></i>
+                Memory Timeline
+            </h2>
+            
+            <div class="relative">
+                <div class="absolute top-0 bottom-0 left-6 w-0.5 bg-gray-700"></div>
+                
+                <!-- Timeline Items -->
+                <div class="space-y-6">
+                    <div class="timeline-item relative pl-14">
+                        <div class="absolute left-4 top-0 w-5 h-5 rounded-full bg-primary border-4 border-gray-900"></div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <img src="IMG-20240430-WA0007.jpg">
+                            <div class="p-3">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-gray-400"> 12:01 April 30, 2024</span>
+                                    <span class="text-xs bg-gray-700 px-2 py-0.5 rounded-full text-gray-300">
+                                        <i class="ri-map-pin-line mr-1"></i>
+                                        ongole
+                                    </span>
+                                </div>
+                                <h3 class="font-semibold mb-1">Memorie From The last Birthday</h3>
+                                <p class="text-sm text-gray-300 mb-2">we founf this flashback from the memories📸</p>
+                                <div class="flex justify-between items-center">
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-heart-line mr-1"></i>
+                                        46
+                                    </button>
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-chat-1-line mr-1"></i>
+                                        View Comments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item relative pl-14">
+                        <div class="absolute left-4 top-0 w-5 h-5 rounded-full bg-secondary border-4 border-gray-900"></div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <img src="yellow.jpg">
+                            <div class="p-3">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-gray-400">April 26, 2024</span>
+                                    <span class="text-xs bg-gray-700 px-2 py-0.5 rounded-full text-gray-300">
+                                        <i class="ri-map-pin-line mr-1"></i>
+                                        Home
+                                    </span>
+                                </div>
+                                <h3 class="font-semibold mb-1">A small Reminder About This Pic</h3>
+                                <p class="text-sm text-gray-300 mb-2">If You Know You Know.</p>
+                                <div class="flex justify-between items-center">
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-heart-line mr-1"></i>
+                                        42
+                                    </button>
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-chat-1-line mr-1"></i>
+                                        View Comments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item relative pl-14">
+                        <div class="absolute left-4 top-0 w-5 h-5 rounded-full bg-primary border-4 border-gray-900"></div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <img src="92c02bb5-8c46-4e50-8496-47124522cbe1.JPG">
+                            <div class="p-3">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-gray-400">August 16, 2024</span>
+                                    <span class="text-xs bg-gray-700 px-2 py-0.5 rounded-full text-gray-300">
+                                        <i class="ri-map-pin-line mr-1"></i>
+                                        Home 🏠
+                                    </span>
+                                </div>
+                                <h3 class="font-semibold mb-1">A Random memories📸</h3>
+                                <p class="text-sm text-gray-300 mb-2">Amazing flashback From Last Year enjoy This Year With Awesome Memories.</p>
+                                <div class="flex justify-between items-center">
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-heart-line mr-1"></i>
+                                        90
+                                    </button>
+                                    <button class="text-gray-400 text-sm flex items-center">
+                                        <i class="ri-chat-1-line mr-1"></i>
+                                        View Comments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="w-full mt-4 py-2 bg-gray-800 rounded-button text-gray-300 flex items-center justify-center cursor-pointer">
+                <i class="ri-history-line mr-2"></i>
+                Load More Memories
+            </button>
+        </section>
+        <div class="grid grid-cols-3 gap-2">
+            <div class="aspect-square rounded-lg overflow-hidden cursor-pointer">
+                <img src="49e7cb0a-ba90-479e-b521-aeafe7501482.JPG">
+            </div>
+            <div class="aspect-square rounded-lg overflow-hidden cursor-pointer">
+                <img src="2.JPG">
+            </div>
+            <div class="aspect-square rounded-lg overflow-hidden cursor-pointer">
+                <img src="IMG_2709.jpg">
+            </div>
+        </div>
+    </section>
+
+        <!-- Easter Egg Hunt Section -->
+        <section class="px-4 mb-8 bg-gray-900 py-6 rounded-lg">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-treasure-map-line mr-2 text-secondary"></i>
+                Easter Egg Hunt
+            </h2>
+            
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-300">Your Progress</span>
+                    <span class="text-sm font-semibold">3/8 Found</span>
+                </div>
+                <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-secondary" style="width: 37.5%"></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center">
+                        <img src="https://readdy.ai/api/search-image?query=colorful%20easter%20egg%20icon%2C%20birthday%20theme%2C%20simple%20design%2C%20centered%2C%20isolated%20on%20dark%20background&width=80&height=80&seq=12360&orientation=squarish" alt="Found Egg 1" class="w-3/4 h-3/4 object-contain">
+                    </div>
+                    <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="ri-check-line text-white text-xs"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center">
+                        <img src="https://readdy.ai/api/search-image?query=colorful%20easter%20egg%20icon%2C%20birthday%20theme%2C%20simple%20design%2C%20centered%2C%20isolated%20on%20dark%20background&width=80&height=80&seq=12361&orientation=squarish" alt="Found Egg 2" class="w-3/4 h-3/4 object-contain">
+                    </div>
+                    <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="ri-check-line text-white text-xs"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center">
+                        <img src="https://readdy.ai/api/search-image?query=colorful%20easter%20egg%20icon%2C%20birthday%20theme%2C%20simple%20design%2C%20centered%2C%20isolated%20on%20dark%20background&width=80&height=80&seq=12362&orientation=squarish" alt="Found Egg 3" class="w-3/4 h-3/4 object-contain">
+                    </div>
+                    <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="ri-check-line text-white text-xs"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center opacity-50">
+                        <i class="ri-question-mark-line text-gray-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center opacity-50">
+                        <i class="ri-question-mark-line text-gray-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center opacity-50">
+                        <i class="ri-question-mark-line text-gray-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center opacity-50">
+                        <i class="ri-question-mark-line text-gray-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="egg-container cursor-pointer">
+                    <div class="egg aspect-square bg-gray-800 rounded-lg flex items-center justify-center opacity-50">
+                        <i class="ri-question-mark-line text-gray-400 text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-sm text-gray-300 mb-3">Find all the hidden eggs across the site to unlock a special birthday message!</p>
+                <button class="bg-gray-700 text-white px-4 py-2 rounded-button cursor-pointer inline-flex items-center">
+                    <i class="ri-compass-3-line mr-2"></i>
+                    Get a Hint
+                </button>
+            </div>
+        </section>
+
+        <!-- Music Playlist Section -->
+        <section class="px-4 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-music-2-line mr-2 text-primary"></i>
+                 Playlist
+            </h2>
+            
+            <div class="bg-gray-800 rounded-lg overflow-hidden mb-4 p-4">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                        <img src="96fab843dc59f3be9ec6e577de8552fa.1000x1000x1.png">
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-semibold">Blue</h3>
+                        <p class="text-sm text-gray-400">yung kai</p>
+                        <div class="music-progress mt-2">
+                            <div class="music-progress-bar" style="width: 45%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1:35</span>
+                            <span>3:35</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center text-gray-300">
+                        <i class="ri-skip-back-line ri-lg"></i>
+                    </button>
+                    <button class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white">
+                        <i class="ri-pause-line ri-xl"></i>
+                    </button>
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center text-gray-300">
+                        <i class="ri-skip-forward-line ri-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex items-center p-3 bg-gray-800/50 rounded-lg cursor-pointer">
+                    <div class="w-10 h-10 rounded overflow-hidden mr-3 flex-shrink-0">
+                        <img src="download.jfif">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-medium">I Wanna Be Yours</h4>
+                        <p class="text-xs text-gray-400">Arctic Monkeys </p>
+                    </div>
+                    <div class="text-xs text-gray-400">3:05</div>
+                </div>
+                
+                <div class="flex items-center p-3 bg-gray-800/50 rounded-lg cursor-pointer">
+                    <div class="w-10 h-10 rounded overflow-hidden mr-3 flex-shrink-0">
+                        <img src="fb4fc4f95bb57d2f16502883632a2507.jpg">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-medium">Are Are Are</h4>
+                        <p class="text-xs text-gray-400"> KK and Sahithi</p>
+                    </div>
+                    <div class="text-xs text-gray-400">4:12</div>
+                </div>
+                
+                <div class="flex items-center p-3 bg-gray-800/50 rounded-lg cursor-pointer">
+                    <div class="w-10 h-10 rounded overflow-hidden mr-3 flex-shrink-0">
+                        <img src="1598615118.okeokkadu3.jpg">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-medium">
+                            Nelluri Nerajana</h4>
+                        <p class="text-xs text-gray-400"> Hariharan and Mahalakshmi Iyer</p>
+                    </div>
+                    <div class="text-xs text-gray-400">5:59</div>
+                </div>
+                
+                <div class="flex items-center p-3 bg-gray-800/50 rounded-lg cursor-pointer">
+                    <div class="w-10 h-10 rounded overflow-hidden mr-3 flex-shrink-0">
+                        <img src="download (1).jfif">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-medium">
+                            Oh Pilla</h4>
+                        <p class="text-xs text-gray-400"> Haricharan, Harini Ivaturi, and The Fantasia Men</p>
+                    </div>
+                    <div class="text-xs text-gray-400">8:03</div>
+                </div>
+            </div>
+        </section>
+                            </button>
+                        </div>
+                    </div>
+            <!-- Gift Reveal Game Section -->
+        <section class="px-4 mb-8 bg-gray-900 py-6 rounded-lg">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="ri-gift-2-line mr-2 text-secondary"></i>
+                Gift Reveal Game
+            </h2>
+            
+            <div class="flex flex-col items-center">
+                <div id="wheel-container" class="relative w-64 h-64 mb-4">
+                    <div class="spin-wheel w-full h-full rounded-full bg-gray-800 border-4 border-gray-700 flex items-center justify-center overflow-hidden">
+                        <img src="https://readdy.ai/api/search-image?query=colorful%20wheel%20of%20fortune%2C%20prize%20wheel%2C%20vibrant%20segments%20with%20gift%20icons%2C%20birthday%20theme%2C%203D%20rendering%2C%20centered%20composition%20on%20dark%20background&width=300&height=300&seq=12349&orientation=squarish" alt="Prize Wheel" class="w-full h-full object-cover">
+                    </div>
+                    <div class="absolute top-0 left-1/2 -ml-2 w-4 h-8 bg-primary"></div>
+                </div>
+                
+                <button id="spin-button" class="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-button mb-4 cursor-pointer flex items-center">
+                    <i class="ri-play-circle-line mr-2"></i>
+                    Spin the Wheel
+                </button>
+                
+                <div class="text-center text-sm text-gray-400">
+                    <p>Spin to reveal your birthday surprises!</p>
+                    <p></p>
+                </div>
+            </div>
+        </section>
+       
+      
+    <!-- Tab Bar -->
+    <nav class="fixed bottom-0 w-full bg-gray-900/90 backdrop-blur-md border-t border-gray-800 z-50">
+        <div class="grid grid-cols-5 h-16">
+            <a href="#" class="flex flex-col items-center justify-center text-primary">
+                <i class="ri-home-5-line ri-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="#" class="flex flex-col items-center justify-center text-gray-500">
+                <i class="ri-game-line ri-lg"></i>
+                <span class="text-xs mt-1">Games</span>
+            </a>
+            <a href="#" class="flex flex-col items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center -mt-4">
+                    <i class="ri-camera-line text-white ri-lg"></i>
+                </div>
+            </a>
+            <a href="#" class="flex flex-col items-center justify-center text-gray-500">
+                <i class="ri-music-2-line ri-lg"></i>
+                <span class="text-xs mt-1">Music</span>
+            </a>
+            <a href="#" class="flex flex-col items-center justify-center text-gray-500">
+                <i class="ri-message-3-line ri-lg"></i>
+                <span class="text-xs mt-1">Messages</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Modal for Gift Reveal (Hidden by default) -->
+    <div id="gift-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] hidden">
+        <div class="bg-gray-800 rounded-lg w-[90%] max-w-sm p-5">
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-4">
+                    <img src="https://readdy.ai/api/search-image?query=gift%20box%20with%20ribbon%2C%20festive%2C%20colorful%2C%20celebration%2C%203D%20rendering%2C%20centered%20on%20dark%20background&width=150&height=150&seq=12370&orientation=squarish" alt="Gift" class="w-full h-full object-contain">
+                </div>
+                <h3 class="text-xl font-bold mb-2">Congratulations!</h3>
+                <p class="text-gray-300 mb-4">You won a special birthday surprise!</p>
+                <div class="bg-gray-700 rounded-lg p-3 mb-4">
+                    <p class="text-lg font-semibold text-primary">Ur Wish</p>
+                    <p class="text-sm text-gray-300">What Youhhh Want</p>
+                </div>
+                <button id="close-modal" class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-6 rounded-button cursor-pointer">
+                    Awesome!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create confetti elements
+            const confettiContainer = document.getElementById('confetti-container');
+            const confettiColors = ['#C80505', '#FF9500', '#FFD700', '#FF4D6D', '#4361EE', '#7209B7'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = Math.random() * 3 + 3 + 's';
+                confettiContainer.appendChild(confetti);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Spin wheel functionality
+            const spinButton = document.getElementById('spin-button');
+            const wheel = document.querySelector('.spin-wheel');
+            const giftModal = document.getElementById('gift-modal');
+            const closeModal = document.getElementById('close-modal');
+            
+            spinButton.addEventListener('click', function() {
+                const degrees = 1800 + Math.floor(Math.random() * 360);
+                wheel.style.transform = `rotate(${degrees}deg)`;
+                
+                spinButton.disabled = true;
+                spinButton.classList.add('opacity-50');
+                
+                setTimeout(() => {
+                    giftModal.classList.remove('hidden');
+                    spinButton.disabled = false;
+                    spinButton.classList.remove('opacity-50');
+                }, 4000);
+            });
+            
+            closeModal.addEventListener('click', function() {
+                giftModal.classList.add('hidden');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Music player functionality
+            const progressBar = document.querySelector('.music-progress-bar');
+            let progress = 45;
+            
+            setInterval(() => {
+                progress = (progress + 1) % 100;
+                progressBar.style.width = progress + '%';
+            }, 1000);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Easter egg hunt functionality
+            const eggs = document.querySelectorAll('.egg');
+            
+            eggs.forEach(egg => {
+                egg.addEventListener('click', function() {
+                    if (this.classList.contains('opacity-50')) {
+                        const random = Math.floor(Math.random() * 10);
+                        if (random < 3) {
+                            this.classList.remove('opacity-50');
+                            this.innerHTML = '';
+                            
+                            const img = document.createElement('img');
+                            img.src = `https://readdy.ai/api/search-image?query=colorful%20easter%20egg%20icon%2C%20birthday%20theme%2C%20simple%20design%2C%20centered%2C%20isolated%20on%20dark%20background&width=80&height=80&seq=${12380 + Math.floor(Math.random() * 10)}&orientation=squarish`;
+                            img.alt = "Found Egg";
+                            img.className = "w-3/4 h-3/4 object-contain";
+                            this.appendChild(img);
+                            
+                            const container = this.parentElement;
+                            const checkmark = document.createElement('div');
+                            checkmark.className = "absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center";
+                            checkmark.innerHTML = '<i class="ri-check-line text-white text-xs"></i>';
+                            container.appendChild(checkmark);
+                            
+                            // Update progress
+                            const progressBar = document.querySelector('.bg-secondary');
+                            const currentWidth = parseFloat(progressBar.style.width);
+                            progressBar.style.width = (currentWidth + 12.5) + '%';
+                            
+                            const progressText = document.querySelector('.font-semibold');
+                            const current = parseInt(progressText.textContent.split('/')[0]);
+                            progressText.textContent = (current + 1) + '/8 Found';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
